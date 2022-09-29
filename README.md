@@ -50,8 +50,6 @@ contrasts_matrix <- makeContrasts(de_CD4_CD8positive = GPA.CD4_CD8positive - Con
                                   de_CD8positive = GPA.CD8positive - Control.CD8positive , 
                                   levels = design)
  
-#dim(gse56481)   
-#dim(design) 
                                   
 gse56481_fit <- lmFit(gse56481,design)# fits a linear model using a gene expression object, fits a linear model for every single gene
 gse56481_fit2 <- contrasts.fit(gse56481_fit,contrasts=contrasts_matrix)
@@ -88,14 +86,15 @@ interesting_genes <- topTable(gse56481_fit2,number=Inf,p.value = 0.05,lfc=2)
 interesting_genes
 
 #volcano plot
-volcanoplot(gse56481_fit2, coef=2, main=sprintf("%d features pass our cutoffs",nrow(interesting_genes)))
 
+volcanoplot(gse56481_fit2, coef=2, main=sprintf("%d features pass our cutoffs",nrow(interesting_genes)))
 points(interesting_genes[['de_CD4_CD8positive']],-log10(interesting_genes[['P.Value']]),col='red') #differentially expressed transcripts of CD4+CD8+ cells, GPA.CD4_CD8positive - Control.CD4_CD8positive
 points(interesting_genes[['de_CD4positive']],-log10(interesting_genes[['P.Value']]),col='blue') #DEGs of CD4+ cells
 points(interesting_genes[['de_CD8positive']],-log10(interesting_genes[['P.Value']]),col='green') #DEGs of CD8+ cells
 
 
 #Heatmap
+
 eset_of_interest <- gse56481[rownames(interesting_genes),]
 pheatmap(exprs(eset_of_interest), cellwidth = 13, cellheight = 3.2, fontsize_row = 4 , labels_col=pd$group )
 
